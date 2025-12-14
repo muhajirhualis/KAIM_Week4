@@ -2,13 +2,21 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
-def load_data(filepath: str) -> pd.DataFrame:
-    """Load data safely with basic validation."""
-    df = pd.read_csv(filepath, low_memory=False)
-    print(f" Loaded {len(df):,} rows × {df.shape[1]} columns")
-    return df
 
+def eda_load_data(filepath: str) -> pd.DataFrame:
+    """Load CSV with error handling."""
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"Data file not found: {os.path.abspath(filepath)}")
+    try:
+        df = pd.read_csv(filepath, low_memory=False)
+        print(f"Loaded {len(df):,} rows × {df.shape[1]} columns")
+        return df
+    except Exception as e:
+        raise RuntimeError(f"Failed to load {filepath}: {e}")
+
+      
 def overview(df: pd.DataFrame):
     """Print shape, dtypes, memory usage."""
     print("=== Shape ===")
@@ -19,6 +27,7 @@ def overview(df: pd.DataFrame):
 
 def missing_and_duplicates(df: pd.DataFrame):
     """Report missing values and duplicates."""
+    
     missing = df.isnull().sum()
     dup_rows = df.duplicated().sum()
     dup_ids = df['TransactionId'].duplicated().sum()
