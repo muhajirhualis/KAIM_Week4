@@ -1,30 +1,44 @@
-# tests/test_smoke.py
 import pytest
 import pandas as pd
+import numpy as np
 import sys
 import os
 
-# Add src to path
-sys.path.insert(0, os.path.abspath("src"))
+sys.path.insert(0, os.path.abspath('..'))
 
-def test_imports():
-    """Smoke test: ensure core modules can be imported."""
-    try:
-        from eda_utils import eda_load_data
-        assert True
-    except Exception as e:
-        pytest.fail(f"Import failed: {e}")
+from src.feature_engineering import CustomerAggregator
+from src.target_proxy import HighRiskLabeler
 
-def test_data_load_smoke():
-    """Smoke test: verify sample data loads without crashing."""
-    from eda_utils import eda_load_data
-    try:
-        # Use relative path assuming tests run from repo root
-        df = eda_load_data("data/raw/Xente_DataSet.csv")
-        assert isinstance(df, pd.DataFrame)
-        assert len(df) > 0
-        assert "CustomerId" in df.columns
-    except FileNotFoundError:
-        pytest.skip("Raw data not available in CI — skipping data load test")
-    except Exception as e:
-        pytest.fail(f"Data load failed: {e}")
+@pytest.fixture
+def sample_data():
+    return pd.DataFrame({
+        'CustomerId': ['C1', 'C1', 'C2', 'C2', 'C3'], 
+        'TransactionId': ['T1', 'T2', 'T3', 'T4', 'T5'],
+        'Value': [100, 200, 50, 75, 300],
+        'Amount': [100, 200, 50, 75, 300],
+        'FraudResult': [0, 0, 1, 0, 0],
+        'TransactionStartTime': pd.to_datetime([
+            '2023-01-01', '2023-01-05', 
+            '2023-01-10', '2023-01-12', 
+            '2023-01-15'
+        ])
+    })
+
+def test_customer_aggregator(sample_data):
+    agg = CustomerAggregator()
+    out = agg.transform(sample_data)
+    
+    assert 'CustomerId' in out.columns
+    assert 'n_transactions' in out.columns
+    assert 'total_value' in out.columns
+    assert len(out) == 3  # 3 customers
+    assert out.loc[out['CustomerId'] == 'C1', 'n_transactions'].iloc[0] == 2
+
+def test_rfm_labeler(sample_data):
+    labeler = HighRiskLabeler(random_state=42)
+    out = labeler.fit_transform(sample_data)
+    
+    assert 'CustomerId' in out.columns
+    assert 'is_high_risk' in out.columns
+    assert set(out['is_high_risk'].unique()).issubset({0, 1})
+    assert len(out) == 3
