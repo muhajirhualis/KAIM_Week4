@@ -53,7 +53,8 @@ def detect_outliers(df: pd.DataFrame, col: str, threshold_pct=0.99):
     if n_out > 0:
         top_out = outliers.nlargest(5, col)
         print("   → Top 5:")
-        display(top_out[['TransactionId', 'CustomerId', col, 'ProductCategory', 'CountryCode']])        
+        # display(top_out[['TransactionId', 'CustomerId', col, 'ProductCategory', 'CountryCode']]) 
+        print(top_out[['TransactionId', 'CustomerId', col, 'ProductCategory', 'CountryCode']].head())
         
         # Boxplot
         fig, ax = plt.subplots(1, 2, figsize=(12, 4))
