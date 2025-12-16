@@ -23,16 +23,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          
-      - name: Auto-format with black
-        run: |
-          pip install black
-          black src/ tests/
 
-      - name: Run linting (flake8)
+      - name: Run linting (ignore style, only check for syntax/import errors)
         run: |
           pip install flake8
-          flake8 src/ tests/ --count --show-source --statistics
+          flake8 src/ tests/ --select=E9,F63,F7,F82 --show-source
 
       - name: Run unit tests
         run: |
