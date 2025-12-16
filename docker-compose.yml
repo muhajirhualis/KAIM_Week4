@@ -1,9 +1,12 @@
 # docker-compose.yml
 version: '3.8'
 services:
-  app:
+  credit-risk-api:
     build: .
-    volumes:
-      - .:/app
+    ports:
+      - "8000:8000"
     environment:
-      - PYTHONPATH=/app/src
+      - MLFLOW_TRACKING_URI=sqlite:///mlflow.db
+    volumes:
+      - ./mlflow.db:/app/mlflow.db
+      - ./data:/app/data
