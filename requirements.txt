@@ -5,3 +5,6 @@ seaborn
 datetime
 scikit-learn
 xverse
+xgboost
+mlflow
+pytest
