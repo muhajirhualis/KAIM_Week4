@@ -2,6 +2,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+
 class CustomerFeatures(BaseModel):
     n_transactions: float
     avg_value: float
@@ -18,8 +19,8 @@ class CustomerFeatures(BaseModel):
     ChannelId_Other: int
     # Add other one-hot columns as needed — match your final feature set
 
+
 class PredictionResponse(BaseModel):
     risk_probability: float
     is_high_risk: int
     message: str = "Success"
-    
