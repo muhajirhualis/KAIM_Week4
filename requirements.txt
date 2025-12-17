@@ -8,3 +8,8 @@ xverse
 xgboost
 mlflow
 pytest
+
+fastapi
+uvicorn[standard]
+flake8
+pydantic
