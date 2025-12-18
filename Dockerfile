@@ -7,10 +7,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy code
+# Copy code and model
 COPY src/ ./src/
-COPY data/processed/modeling_dataset.csv ./data/processed/modeling_dataset.csv
-COPY mlflow.db ./mlflow.db
+COPY models/credit_risk_best.pkl ./models/credit_risk_best.pkl
 
 # Expose port
 EXPOSE 8000

@@ -13,3 +13,4 @@ fastapi
 uvicorn[standard]
 flake8
 pydantic
+autopep8
